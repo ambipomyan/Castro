@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Thermal Diffusion &mdash; Castro  documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=2e394b92" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=5929fcd5"></script>
+        <script src="_static/doctools.js?v=9a2dae69"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script src="_static/clipboard.min.js?v=a7894cd8"></script>
+        <script src="_static/copybutton.js?v=f281be69"></script>
+        <script>window.MathJax = {"tex": {"inlineMath": [["\\(", "\\)"]], "displayMath": [["\\[", "\\]"]], "macros": {"kth": "{{k_\\mathrm{th}}}", "gcc": "{\\mathrm{g~cm^{-3}}}", "cms": "{\\mathrm{cm~s^{-1}}}", "presunit": "{\\mathrm{dyn~cm^{-2}}}", "accelunit": "{\\mathrm{cm~s^{-2}}}", "ergg": "{\\mathrm{erg~g^{-1}}}", "Ab": "{{\\bf A}}", "eb": "{{\\bf e}}", "Fb": "{{\\bf F}}", "gb": "{{\\bf g}}", "Hb": "{{\\bf H}}", "ib": "{{\\bf i}}", "Ib": "{{\\bf I}}", "Kb": "{{\\bf K}}", "lb": "{{\\bf l}}", "Lb": "{{\\bf L}}", "nb": "{{\\bf n}}", "Pb": "{{\\bf P}}", "Qb": "{{\\bf Q}}", "rb": "{{\\bf r}}", "Rb": "{{\\bf R}}", "Sb": "{{\\bf S}}", "ub": "{{\\bf u}}", "Ub": "{{\\bf U}}", "xb": "{{\\bf x}}", "dt": "{\\Delta t}", "omegadot": "{\\dot\\omega}", "inp": "{{\\rm in}}", "outp": "{{\\rm out}}", "sync": "{{\\rm sync}}", "half": "{\\frac{1}{2}}", "myhalf": "{\\half}", "nph": "{{n+\\myhalf}}", "kpp": "{\\ensuremath{\\kappa_{\\mathrm{P}}}}", "kpr": "{\\ensuremath{\\kappa_{\\mathrm{R}}}}", "kpf": "{\\ensuremath{\\kappa_{\\mathrm{F}}}}", "vb": "{\\boldsymbol{v}}", "vbt": "{\\widetilde{\\vb}}", "rbt": "{\\widetilde{\\rb}}", "ob": "{\\boldsymbol{\\omega}}", "nablab": "{\\boldsymbol{\\nabla}}", "avg": ["{{\\left \\langle #1 \\right \\rangle}}", 1]}}}</script>
+        <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Rotation" href="rotation.html" />
+    <link rel="prev" title="Gravity" href="gravity.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            Castro
+              <img src="_static/castro_logo_hot_200.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+    <div class="branch">
+        Branch: <a href="./diffusion.html">main</a> | <a href="./dev/diffusion.html">development</a>
+    </div>
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Castro basics</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Preface.html">Preface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Introduction.html">Introduction to Castro</a></li>
+<li class="toctree-l1"><a class="reference internal" href="getting_started.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="inputs.html">Input Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="rp_intro.html">Runtime Parameters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mpi_plus_x.html">Running Options: CPUs and GPUs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="FlowChart.html">Flowchart</a></li>
+<li class="toctree-l1"><a class="reference internal" href="software.html">Software Design</a></li>
+<li class="toctree-l1"><a class="reference internal" href="problem_setups.html">Distributed Problem Setups</a></li>
+<li class="toctree-l1"><a class="reference internal" href="timestepping.html">Timestepping and Retries</a></li>
+<li class="toctree-l1"><a class="reference internal" href="creating_a_problem.html">Setting Up Your Own Problem</a></li>
+<li class="toctree-l1"><a class="reference internal" href="io.html">Outputting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="regridding.html">Regridding</a></li>
+<li class="toctree-l1"><a class="reference internal" href="visualization.html">Visualization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">Frequently Asked Questions</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Castro reference</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="build_system.html">Build System Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="debugging.html">Debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Hydrodynamics.html">Hydrodynamics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hse.html">Hydrostatic Equilibrium</a></li>
+<li class="toctree-l1"><a class="reference internal" href="EOS.html">Equation of State</a></li>
+<li class="toctree-l1"><a class="reference internal" href="reactions.html">Reactions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mhd.html">MHD</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gravity.html">Gravity</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Thermal Diffusion</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#timestep-limiter">Timestep Limiter</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#runtime-parameters">Runtime Parameters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#conductivities">Conductivities</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#unit-tests">Unit Tests</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="rotation.html">Rotation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sponge.html">Sponge</a></li>
+<li class="toctree-l1"><a class="reference internal" href="radiation.html">Radiation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Particles.html">Tracer particles</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sdc.html">Spectral Deferred Corrections</a></li>
+<li class="toctree-l1"><a class="reference internal" href="AMR.html">Adaptive Mesh Refinement</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ConvertCheckpoint.html">Checkpoint Embiggener</a></li>
+<li class="toctree-l1"><a class="reference internal" href="self_consistent_field.html">Self-Consistent Field Initialization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="MAESTRO_restart.html">Restarting from Maestro</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Verification.html">Verification</a></li>
+<li class="toctree-l1"><a class="reference internal" href="development.html">Development Best Practices</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="filelist.html">File list</a></li>
+<li class="toctree-l1"><a class="reference internal" href="classlist.html">Class list</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">References</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="zreferences.html">References</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Castro</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Thermal Diffusion</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/diffusion.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="thermal-diffusion">
+<span id="ch-diffusion"></span><h1>Thermal Diffusion<a class="headerlink" href="#thermal-diffusion" title="Link to this heading"></a></h1>
+<p>Castro incorporates explicit thermal diffusion into the energy equation.
+In terms of the specific internal energy, <span class="math notranslate nohighlight">\(e\)</span>, this appears as:</p>
+<div class="math notranslate nohighlight">
+\[\rho \frac{De}{Dt} + p \nabla \cdot \ub = \nabla \cdot \kth \nabla T\]</div>
+<p>where <span class="math notranslate nohighlight">\(\kth\)</span> is the thermal conductivity, with units
+<span class="math notranslate nohighlight">\(\mathrm{erg~cm^{-1}~s^{-1}~K^{-1}}\)</span>.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>To enable diffusion, you need to compile with:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">USE_DIFFUSION</span><span class="o">=</span><span class="n">TRUE</span>
+</pre></div>
+</div>
+</div>
+<p>It is treated explicitly, by constructing the contribution to the evolution as a
+source term. This is time-centered to achieve second-order accuracy
+in time.</p>
+<section id="timestep-limiter">
+<h2>Timestep Limiter<a class="headerlink" href="#timestep-limiter" title="Link to this heading"></a></h2>
+<p>Castro integrates diffusion explicitly in time&amp;mdash;this means that
+there is a diffusion timestep limiter.</p>
+<p>To see the similarity to the thermal diffusion equation, consider the
+special case of constant conductivity, <span class="math notranslate nohighlight">\(\kth\)</span>, and density, and
+assume an ideal gas, so <span class="math notranslate nohighlight">\(e = c_v T\)</span>, where <span class="math notranslate nohighlight">\(c_v\)</span> is the
+specific heat at constant volume.  Finally, ignore hydrodynamics, so
+<span class="math notranslate nohighlight">\(\ub = 0\)</span>. This gives:</p>
+<div class="math notranslate nohighlight">
+\[\frac{\partial T}{\partial t} = D \nabla^2 T\]</div>
+<p>where <span class="math notranslate nohighlight">\(D \equiv \kth/(\rho c_v)\)</span>.</p>
+<p>The timestep limiter for this is:</p>
+<div class="math notranslate nohighlight">
+\[\Delta t_\mathrm{diff} \le \frac{1}{2} \frac{\Delta x^2}{D}\]</div>
+<p>This is implemented in <code class="docutils literal notranslate"><span class="pre">estdt_temp_diffusion</span></code>.</p>
+</section>
+<section id="runtime-parameters">
+<h2>Runtime Parameters<a class="headerlink" href="#runtime-parameters" title="Link to this heading"></a></h2>
+<p>The following parameter affects diffusion:</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">castro.diffuse_temp</span></code>: enable thermal diffusion (0 or 1; default 0)</p>
+<p>A pure diffusion problem (with no hydrodynamics) can be run by setting:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">castro</span><span class="o">.</span><span class="n">diffuse_temp</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="n">castro</span><span class="o">.</span><span class="n">do_hydro</span> <span class="o">=</span> <span class="mi">0</span>
+</pre></div>
+</div>
+</li>
+</ul>
+<p id="index-0">The diffusion approximation breaks down at the surface of stars,
+where the density rapidly drops and the mean free path becomes
+large. In those instances, you should use the flux limited diffusion
+module in Castro to evolve a radiation field. However, if your
+interest is only on the diffusion in the interior, you can use
+the parameters:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">castro.diffuse_cutoff_density</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">castro.diffuse_cutoff_density_hi</span></code></p></li>
+</ul>
+</div></blockquote>
+<p>to specify a density,
+below which, diffusion is not modeled. This is implemented in the
+code by linearly scaling the conductivity to zero between these limits, e.g.,</p>
+<div class="math notranslate nohighlight">
+\[\kth = \kth \cdot \frac{\rho - \mathtt{castro.diffuse\_cutoff\_density}}{\mathtt{castro.diffuse\_cutoff\_density\_hi} - \mathtt{castro.diffuse\_cutoff\_density}}\]</div>
+</section>
+<section id="conductivities">
+<h2>Conductivities<a class="headerlink" href="#conductivities" title="Link to this heading"></a></h2>
+<p>To complete the setup, a thermal conductivity must be specified. These
+are supplied by Microphysics, and use an interface similar to the
+equation of state interface.</p>
+<div class="admonition note" id="index-1">
+<p class="admonition-title">Note</p>
+<p>The choice of conductivity must be specified at compile-time via
+the <code class="docutils literal notranslate"><span class="pre">CONDUCTIVITY_DIR</span></code> option.</p>
+</div>
+<p>The current choices of conductivity are:</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">constant</span></code> : A simple constant thermal conductivity. This can be
+selected by setting:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">CONDUCTIVITY_DIR</span> <span class="o">:=</span> <span class="n">constant</span>
+</pre></div>
+</div>
+<p>in your <code class="docutils literal notranslate"><span class="pre">GNUmakefile</span></code>. To set the value of the conductivity (e.g., to
+<span class="math notranslate nohighlight">\(100\)</span>), you add to your input file:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">conductivity</span><span class="o">.</span><span class="n">const_conductivity</span> <span class="o">=</span> <span class="mf">100.0</span>
+</pre></div>
+</div>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">constant_opacity</span></code> : A simple constant opacity. This is
+converted to an opacity as:</p>
+<div class="math notranslate nohighlight">
+\[\kth = \frac{16 \sigma_B T^3}{3 \kappa_\mathrm{const} \rho}\]</div>
+<p>where <span class="math notranslate nohighlight">\(\kappa_\mathrm{const}\)</span> is the opacity, with units <span class="math notranslate nohighlight">\(\mathrm{cm^2~g^{-1}}\)</span>.
+This is selected by setting:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">CONDUCTIVITY_DIR</span> <span class="o">:=</span> <span class="n">constant_opacity</span>
+</pre></div>
+</div>
+<p>in your <code class="docutils literal notranslate"><span class="pre">GNUmakefile</span></code>. To set the value of the opacity, e.g., to
+0.2 (for electron scattering), set:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">conductivity</span><span class="o">.</span><span class="n">const_opacity</span> <span class="o">=</span> <span class="mf">0.2</span>
+</pre></div>
+</div>
+<p>in the inputs file.</p>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">stellar</span></code> : This is the set of conductivities and radiative opacities
+appropriate for stellar interiors described in <span id="id1">[<a class="reference internal" href="zreferences.html#id75" title="F. X. Timmes. Physical Properties of Laminar Helium Deflagrations. Astrophysical Journal, 528(2):913-945, January 2000. doi:10.1086/308203.">66</a>]</span>.</p></li>
+</ul>
+</section>
+<section id="unit-tests">
+<h2>Unit Tests<a class="headerlink" href="#unit-tests" title="Link to this heading"></a></h2>
+<p>A simple test problem that sets up a Gaussian temperature profile
+and does pure diffusion is provided as <code class="docutils literal notranslate"><span class="pre">diffusion_test</span></code>.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="gravity.html" class="btn btn-neutral float-left" title="Gravity" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="rotation.html" class="btn btn-neutral float-right" title="Rotation" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2018-2022, Castro development team.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>  
+
+
+</body>
+</html>
