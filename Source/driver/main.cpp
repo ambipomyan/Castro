@@ -162,6 +162,20 @@ main (int   argc,
 
     double dRunTime2 = ParallelDescriptor::second();
 
+    // file to save results
+    std::fstream f;
+    f.open("out.txt");
+    f<<"header"<<std::endl;
+    // levels
+    int n_levels = 4;
+    // positions
+    int x_max = 16;
+    //int i = 0;
+    int j = 0;
+    int k = 0;
+    // counts
+    int counts = 0;
+
     while ( amrptr->okToContinue()                            &&
            (amrptr->levelSteps(0) < max_step || max_step < 0) &&
            (amrptr->cumTime() < stop_time || stop_time < 0.0) )
@@ -171,7 +185,30 @@ main (int   argc,
         // Do a timestep.
         //
         amrptr->coarseTimeStep(stop_time);
+
+	// td_region_end()
+	counts++;
+
+	f<<counts<<" ";
+
+	amrex::Vector< std::unique_ptr<AmrLevel> >& amr_levels = amrptr->getAmrLevels();
+
+	for (int l = 0; l < n_levels; ++l) {
+	    amrex::MultiFab& mf = amr_levels[l]->get_new_data(State_Type);
+	    for (int i = 0; i < x_max; ++i) {
+	        amrex::Array4<amrex::Real> mf_array = mf.array(0);
+		printf("%d, %d, %d, %lf ", i, j, k, mf_array(i, j, k, QU));
+
+		f<<mf_array(i, j, k, QU)<<" ";
+	    }
+	}
+	printf("\n");
+
+	f<<std::endl;
     }
+
+    f.close();
+    //
 
 #ifdef DO_PROBLEM_POST_SIMULATION
     Castro::problem_post_simulation(amrptr->getAmrLevels());
