@@ -167,12 +167,14 @@ main (int   argc,
     f.open("out.txt");
     f<<"header"<<std::endl;
     // levels
-    int n_levels = 4;
+    int n_levels = 1;
     // positions
-    int x_max = 16;
+    int x_max = 128;
+    int x_lo = x_max / 2 - 16;
+    int x_hi = x_max / 2 + 16;
     //int i = 0;
-    int j = 0;
-    int k = 0;
+    int j = x_max / 2;
+    int k = x_max / 2;
     // counts
     int counts = 0;
 
@@ -195,11 +197,11 @@ main (int   argc,
 
 	for (int l = 0; l < n_levels; ++l) {
 	    amrex::MultiFab& mf = amr_levels[l]->get_new_data(State_Type);
-	    for (int i = 0; i < x_max; ++i) {
-	        amrex::Array4<amrex::Real> mf_array = mf.array(0);
+	    amrex::Array4<amrex::Real> mf_array = mf[0].array();
+	    for (int i = x_lo; i < x_hi; ++i) {
 		printf("%d, %d, %d, %lf ", i, j, k, mf_array(i, j, k, QU));
 
-		f<<mf_array(i, j, k, QU)<<" ";
+	        f<<mf_array(i, j, k, QU)<<" ";
 	    }
 	}
 	printf("\n");
