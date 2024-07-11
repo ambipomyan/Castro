@@ -175,6 +175,11 @@ main (int   argc,
     for (int i = 0; i < 4; i++) {
         prevTime[i] = 0.0;
     }
+    // diagnostic variables
+    Real temp_2 = 0.0;
+    Real mom_2 = 0.0;
+    Real mass_2 = 0.0;
+    Real energy_2 = 0.0;
 
     while ( amrptr->okToContinue()                            &&
            (amrptr->levelSteps(0) < max_step || max_step < 0) &&
@@ -200,15 +205,8 @@ main (int   argc,
 	// collecting data from all levels
 	Real temp = 0.0;
 	Real mom = 0.0;
-
-	Real temp_2 = 0.0;
-	Real mom_2 = 0.0;
-
 	Real mass = 0.0;
-	Real rho_E = 0.0;
-
-	Real mass_2 = 0.0;
-        Real energy = 0.0;
+	Real energy = 0.0;
 
         for (int lev = 0; lev <= finest_level; lev++) {
 	    Real dt = amrptr->dtLevel(lev);
@@ -225,11 +223,15 @@ main (int   argc,
 	    mom = ca_lev.volWgtSum(S_new, UML);
 #endif
 	    mass  += ca_lev.volWgtSum(S_new, URHO);
-            rho_E += ca_lev.volWgtSum(S_new, UEDEN);
+            energy += ca_lev.volWgtSum(S_new, UEDEN);
 
             prev_time += dt;
 	    prevTime[lev] = prev_time;
         }
+
+	// normalization
+        temp = temp / 1e38;
+        mom = mom / 1e51;
 
 	Real dTemp = temp - temp_2;
 	Real dMom = mom - mom_2;
@@ -237,11 +239,14 @@ main (int   argc,
         temp_2 = temp;
 	mom_2 = mom;
 
+        mass = mass / 1e33;
+        energy = energy / 1e50;
+
 	Real dMass = mass - mass_2;
-	Real dEnergy = rho_E;
+	Real dEnergy = energy - energy_2;
 
 	mass_2 = mass;
-        energy += dEnergy;
+        energy_2 = energy;
 
         f<<temp<<" "<<dTemp<<" "<<mom<<" "<<dMom<<"  ";
 
