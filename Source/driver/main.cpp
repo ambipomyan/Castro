@@ -215,7 +215,7 @@ main (int   argc,
 	    Real prev_time = prevTime[lev];
             
 	    // dummy object
-	    Castro ca_lev = Castro();
+	    Castro& ca_lev = dynamic_cast<Castro &>(amrptr->getLevel(lev));
 
             amrex::MultiFab& S_new = amr_levels[lev]->get_new_data(State_Type);
 
