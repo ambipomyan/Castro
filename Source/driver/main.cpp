@@ -26,6 +26,8 @@
 
 #include <global.H>
 
+using namespace castro;
+
 using namespace amrex;
 
 std::string inputs_name{};
@@ -166,17 +168,13 @@ main (int   argc,
     std::fstream f;
     f.open("out.txt");
     f<<"header"<<std::endl;
-    // levels
-    int n_levels = 1;
-    // positions
-    int x_max = 128;
-    int x_lo = x_max / 2 - 16;
-    int x_hi = x_max / 2 + 16;
-    //int i = 0;
-    int j = x_max / 2;
-    int k = x_max / 2;
     // counts
     int counts = 0;
+    // timer
+    Real prevTime[4];
+    for (int i = 0; i < 4; i++) {
+        prevTime[i] = 0.0;
+    }
 
     while ( amrptr->okToContinue()                            &&
            (amrptr->levelSteps(0) < max_step || max_step < 0) &&
@@ -193,17 +191,62 @@ main (int   argc,
 
 	f<<counts<<" ";
 
+        // finest level
+        int finest_level = amrptr->finestLevel();
+
+	// levels
 	amrex::Vector< std::unique_ptr<AmrLevel> >& amr_levels = amrptr->getAmrLevels();
 
-	for (int l = 0; l < n_levels; ++l) {
-	    amrex::MultiFab& mf = amr_levels[l]->get_new_data(State_Type);
-	    amrex::Array4<amrex::Real> mf_array = mf[0].array();
-	    for (int i = x_lo; i < x_hi; ++i) {
-		printf("%d, %d, %d, %lf ", i, j, k, mf_array(i, j, k, QU));
+	// collecting data from all levels
+	Real temp = 0.0;
+	Real mom = 0.0;
 
-	        f<<mf_array(i, j, k, QU)<<" ";
-	    }
-	}
+	Real temp_2 = 0.0;
+	Real mom_2 = 0.0;
+
+	Real mass = 0.0;
+	Real rho_E = 0.0;
+
+	Real mass_2 = 0.0;
+        Real energy = 0.0;
+
+        for (int lev = 0; lev <= finest_level; lev++) {
+	    Real dt = amrptr->dtLevel(lev);
+	    Real prev_time = prevTime[lev];
+            
+	    // dummy object
+	    Castro ca_lev = Castro();
+
+            amrex::MultiFab& S_new = amr_levels[lev]->get_new_data(State_Type);
+
+            temp = ca_lev.volWgtSum(S_new, UTEMP);
+            mom = ca_lev.volWgtSum(S_new, UMX);
+#ifdef HYBRID_MOMENTUM
+	    mom = ca_lev.volWgtSum(S_new, UML);
+#endif
+	    mass  += ca_lev.volWgtSum(S_new, URHO);
+            rho_E += ca_lev.volWgtSum(S_new, UEDEN);
+
+            prev_time += dt;
+	    prevTime[lev] = prev_time;
+        }
+
+	Real dTemp = temp - temp_2;
+	Real dMom = mom - mom_2;
+
+        temp_2 = temp;
+	mom_2 = mom;
+
+	Real dMass = mass - mass_2;
+	Real dEnergy = rho_E;
+
+	mass_2 = mass;
+        energy += dEnergy;
+
+        f<<temp<<" "<<dTemp<<" "<<mom<<" "<<dMom<<"  ";
+
+	f<<mass<<" "<<dMass<<" "<<energy<<" "<<dEnergy<<" "<<prevTime[0];
+
 	printf("\n");
 
 	f<<std::endl;
