@@ -181,6 +181,30 @@ main (int   argc,
     Real mass_2 = 0.0;
     Real energy_2 = 0.0;
 
+    // controls
+    //stop_time = 0.25*stop_time;
+    Real train_partition = 1.0;
+    int train_iters = 10000;
+    Real train_lr = 0.0001;
+
+    int model_size = 5;
+    int data_size = model_size + 1;
+
+    Real *X = (Real *)malloc(data_size*sizeof(Real));
+    X[0] = 1.0;
+    for (int i = 1; i < data_size; i++) {
+        X[i] = 0.0;
+    }
+    Real y = 0.0;
+    Real *a = (Real *)malloc(model_size*sizeof(Real));
+    for (int i = 0; i < model_size; i++) {
+	a[i] = 0.2;
+    }
+
+    Real res_time_step = 0.0;
+    int res_iter = 0;
+
+
     while ( amrptr->okToContinue()                            &&
            (amrptr->levelSteps(0) < max_step || max_step < 0) &&
            (amrptr->cumTime() < stop_time || stop_time < 0.0) )
@@ -252,9 +276,69 @@ main (int   argc,
 
 	f<<mass<<" "<<dMass<<" "<<energy<<" "<<dEnergy<<" "<<prevTime[0];
 
+/* batch data collection */
+
+	Real train_var = temp;
+
+	if (counts < data_size) {
+	    int Idx = counts%data_size;
+		X[Idx] = train_var;
+	} else {
+	    for (int i = 1; i < model_size; i++) {
+                X[i] = X[i+1];
+            }
+	    X[model_size] = train_var;
+	    y = train_var;
+	}
+
+/* varibale tracking */
+/*
+	if (counts > model_size) {
+	    Real tar1 = (X[model_size] - X[model_size-1]) - (X[model_size-1] - X[model_size-2]);
+	    Real tar2 = (X[2] - X[1]) - (X[1] -X[0]);
+
+	    if (tar1 * tar2 < 0.0) {
+	        res_time_step = prevTime[0];
+		res_iter = counts;
+	    }
+	}
+ */
+/* simulation prediction */
+/*
+        if (amrptr->cumTime() < train_partition*stop_time &&
+	    counts > model_size)
+	{
+
+	    Real *temp_step = (Real *)malloc(model_size*sizeof(Real));
+
+            for (int k = 0; k < train_iters; k++) {
+                for (int i = 0; i < model_size; i++) {
+                    Real train_loss = 0.0;
+                    Real hx = 0.0;
+                    for (int j  = 0; j < model_size; j++) {
+                        hx += a[j] * X[j];
+                    }
+                    train_loss += (hx - y) * X[i];
+                    temp_step[i] = train_loss * train_lr;
+                    a[i] -= temp_step[i];
+	        }
+	    }
+	}
+
+	Real train_pred = 0.0;
+	Real train_error = 0.0;
+
+	for (int i = 0; i < model_size; i++) {
+            train_pred += a[i] * X[i];
+	    train_error += train_pred - train_var; 
+        }
+
+	f<<" "<<train_pred<<" "<<train_var<<" "<<train_error<<" "<<res_time_step<<" "<<res_iter<<" "<<X[0]<<" "<<X[1]<<" "<<X[2]<<" "<<X[3]<<" "<<X[4]<<" "<<y<<"  "<<a[0]<<" "<<a[1]<<" "<<a[2]<<" "<<a[3]<<" "<<a[4];
+ */
 	printf("\n");
 
 	f<<std::endl;
+
     }
 
     f.close();
