@@ -204,6 +204,13 @@ main (int   argc,
     Real res_time_step = 0.0;
     int res_iter = 0;
 
+    // #
+    int mini_batch = 32;
+    int track_id = 5;
+    Real *temps = (Real *)malloc(mini_batch*sizeof(Real));
+    Real Tmax;
+    Real T0;
+    int fflg = 0;
 
     while ( amrptr->okToContinue()                            &&
            (amrptr->levelSteps(0) < max_step || max_step < 0) &&
@@ -226,6 +233,64 @@ main (int   argc,
 	// levels
 	amrex::Vector< std::unique_ptr<AmrLevel> >& amr_levels = amrptr->getAmrLevels();
 
+        // arrays #
+	amrex::MultiFab& mf = amr_levels[0]->get_new_data(State_Type);
+	//amrex::Array4<amrex::Real> mf_array = mf[bId].array();
+
+	// time and temperature #
+	Real dt = amrptr->dtLevel(0);
+	prevTime[0] += dt;
+
+	f<<prevTime[0]<<" ";
+
+	// iterator #
+	// MPI+OpenMP
+/*
+	for (amrex::MFIter mfi(mf); mfi.isValid(); ++mfi) {
+	    const amrex::Box& bx = mfi.validbox();
+            const amrex::Array4<amrex::Real>& mf_array = mf.array(mfi);
+
+	    for (int i = 0; i < mini_batch; ++i) {
+                temps[i] = mf_array(i, mini_batch/2, mini_batch/2, UTEMP);
+		f<<temps[i]<<" ";
+	    }
+	}
+ */
+	// OpenMP
+        amrex::Array4<amrex::Real> mf_array = mf[0].array();
+	for (int i = 0; i < mini_batch; ++i) {
+            temps[i] = mf_array(i, mini_batch/2, mini_batch/2, UTEMP);
+            f<<temps[i]<<" ";
+        }
+
+	// gradient tracking #
+	for (int n = 0; n < mini_batch; ++n) {
+	    // max
+	    if (fflg == 0) {
+	        Real tar0 = (temps[track_id] - temps[track_id-1]) * (temps[track_id-1] - temps[track_id-2]);
+	        if (tar0 < 0.0) {
+	            Tmax = track_id;
+		    fflg++;
+		}
+	    }
+
+	    // inflection
+	    if (fflg == 1) {
+                Real tar1 = (temps[track_id] - temps[track_id-1]) - (temps[track_id-1] - temps[track_id-2]); 
+                Real tar2 = (temps[track_id-1] - temps[track_id-2]) - (temps[track_id-2] - temps[track_id-3]);
+
+                if (tar1 * tar2 < 0.0) {
+	            T0 = track_id;
+		    fflg++;
+	        }
+	    }
+	}
+
+	// check #
+	if (T0 / Tmax >= 1.1) {
+	    f<<"Denotation!YES!"<<" ";
+	}
+/*
 	// collecting data from all levels
 	Real temp = 0.0;
 	Real mom = 0.0;
@@ -254,8 +319,8 @@ main (int   argc,
         }
 
 	// normalization
-        temp = temp / 1e38;
-        mom = mom / 1e51;
+	temp = temp / 1e38;
+	mom = mom / 1e51;
 
 	Real dTemp = temp - temp_2;
 	Real dMom = mom - mom_2;
@@ -275,9 +340,10 @@ main (int   argc,
         f<<temp<<" "<<dTemp<<" "<<mom<<" "<<dMom<<"  ";
 
 	f<<mass<<" "<<dMass<<" "<<energy<<" "<<dEnergy<<" "<<prevTime[0];
+ */
 
 /* batch data collection */
-
+/*
 	Real train_var = temp;
 
 	if (counts < data_size) {
@@ -290,6 +356,7 @@ main (int   argc,
 	    X[model_size] = train_var;
 	    y = train_var;
 	}
+ */
 
 /* varibale tracking */
 /*
