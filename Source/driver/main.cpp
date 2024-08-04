@@ -321,7 +321,10 @@ main (int   argc,
 
 	// hotspot
             if (i > 1 && i % 2 == 0 && hotspots[i] != 0) {
-                hotspot_size += hotspots[i] - hotspots[i-1];
+		Real tmp = hotspots[i] - hotspots[i-1];
+		if (tmp >= 0.0) {
+                    hotspot_size += tmp;
+		}
             }
         }
 
