@@ -206,11 +206,17 @@ main (int   argc,
 
     // #
     int mini_batch = 32;
-    int track_id = 5;
     Real *temps = (Real *)malloc(mini_batch*sizeof(Real));
-    Real Tmax;
-    Real T0;
-    int fflg = 0;
+    Real *peaks = (Real *)malloc(mini_batch*sizeof(Real));
+    Real *hotspots = (Real *)malloc(mini_batch*sizeof(Real));
+    Real *rois = (Real *)malloc(mini_batch*sizeof(Real));
+
+    for (int i = 0; i < mini_batch; i++) {
+        peaks[i] = 0.0;
+	hotspots[i] = 0.0;
+	rois[i] = 0.0;
+    }
+    // #
 
     while ( amrptr->okToContinue()                            &&
            (amrptr->levelSteps(0) < max_step || max_step < 0) &&
@@ -264,32 +270,62 @@ main (int   argc,
         }
 
 	// gradient tracking #
+	int track_id = 3;
+	int counts_peak = 0;
+	int counts_hotspot = 0;
+	int counts_roi = 0;
+
 	for (int n = 0; n < mini_batch; ++n) {
+            // threshold
+	    Real tar = (temps[track_id] - 1.0e8) * (temps[track_id-1] - 1.0e8);
+
+	    if (tar < 0.0) {
+	        hotspots[counts_hotspot] = track_id;
+		counts_hotspot++;
+	    }
 	    // max
-	    if (fflg == 0) {
-	        Real tar0 = (temps[track_id] - temps[track_id-1]) * (temps[track_id-1] - temps[track_id-2]);
-	        if (tar0 < 0.0) {
-	            Tmax = track_id;
-		    fflg++;
-		}
+	    Real tar0 = (temps[track_id] - temps[track_id-1]) * (temps[track_id-1] - temps[track_id-2]);
+
+	    if (tar0 < 0.0) {
+	        peaks[counts_peak] = temps[track_id-1];
+		counts_peak++;
 	    }
 
-	    // inflection
-	    if (fflg == 1) {
-                Real tar1 = (temps[track_id] - temps[track_id-1]) - (temps[track_id-1] - temps[track_id-2]); 
-                Real tar2 = (temps[track_id-1] - temps[track_id-2]) - (temps[track_id-2] - temps[track_id-3]);
+	    // inflection points
+	    Real tar1 = (temps[track_id] - temps[track_id-1]) - (temps[track_id-1] - temps[track_id-2]); 
+            Real tar2 = (temps[track_id-1] - temps[track_id-2]) - (temps[track_id-2] - temps[track_id-3]);
 
-                if (tar1 * tar2 < 0.0) {
-	            T0 = track_id;
-		    fflg++;
-	        }
+            if (tar1 * tar2 < 0.0) {
+                rois[counts_peak] = track_id-2;
+	        counts_roi++;
 	    }
+
+	    track_id++;
 	}
 
 	// check #
-	if (T0 / Tmax >= 1.1) {
-	    f<<"Denotation!YES!"<<" ";
-	}
+	Real peak = 0.0;
+	int roi_size = 0;
+	int hotspot_size = 0;
+
+	for (int i = 0; i < mini_batch; i++) {
+	// peak
+	    if (peaks[i] > peak) {
+	        peak = peaks[i];
+	    }
+
+	// ROI
+	    if (rois[i] != 0) {
+	        roi_size = rois[i] - rois[0];
+	    }
+
+	// hotspot
+            if (i > 1 && i % 2 == 0 && hotspots[i] != 0) {
+                hotspot_size += hotspots[i] - hotspots[i-1];
+            }
+        }
+
+	f<<peak<<" "<<counts_peak<<" "<<roi_size<<" "<<hotspot_size<<" ";
 /*
 	// collecting data from all levels
 	Real temp = 0.0;
